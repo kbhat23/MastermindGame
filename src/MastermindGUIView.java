@@ -21,6 +21,23 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.MastermindModel;
 
+/**
+ * @author kaushalbhat
+ * 
+ *         File: MastermindGUIView.java
+ * 
+ *         Purpose: Contains the GUI-based view of the Mastermind game.
+ *         The GUI runs uses JavaFX 15. The user must click on the 
+ *         4 circles at the bottom; each click cycles through the 6
+ *         possible colors. Once 4 colors are chosen, the user clicks "Guess".
+ *         The guess is displayed as a row in the main part of the window,
+ *         with up to 4 small pegs displayed to the right, indicating:
+ *         		black: number of colors that are correct and in the right place
+ *         		white: number of colors that are correct but in the wrong place
+ *         
+ *         The user gets 10 attempts to guess the correct answer.
+ *
+ */
 public class MastermindGUIView extends Application {
 	private BorderPane window = new BorderPane();
 	private Button guessBtn = new Button("Guess");
@@ -32,9 +49,15 @@ public class MastermindGUIView extends Application {
 	private HashMap<Integer, Character> colorCharMap = new HashMap<Integer, Character>();
 	private HashMap<Circle, Integer> curGuessColors = new HashMap<Circle, Integer>();
 	private int RCRP, RCWP;
+	private final Paint BACKGROUND_COLOR = Color.TAN;
 	MastermindModel model;
 	MastermindController controller;
 
+
+	/**
+	 * THe main method of the MastermindGUI. Calls the functions that set up the GUI
+	 * and make it fully functional.
+	 */
 	@Override
 	public void start(Stage stage) throws Exception {
 		model = new MastermindModel();
@@ -49,6 +72,13 @@ public class MastermindGUIView extends Application {
 		stage.show();
 	}
 
+	/**
+	 * Initializes colorMap and colorCharMap.
+	 * Initializes the colorMap, which maps integers to the colors Paint objects they
+	 * are associated with (eg. Color.RED), and colorCharMap, which maps the same integers with
+	 * the same colors represented with a character (eg. 'r').
+	 * 
+	 */
 	private void setupColors() {
 		colorMap.put(-1, Color.BLACK);
 		colorMap.put(0, Color.RED);
@@ -65,15 +95,24 @@ public class MastermindGUIView extends Application {
 		colorCharMap.put(5, 'p');
 	}
 
+	/**
+	 * Sets up the background of the Mastermind game.
+	 * Sets up the background of the GUi game, including coloring, spacing, etc.
+	 */
 	private void setupBackground() {
 		window.setCenter(centerBox);
 
-		BackgroundFill bgfill = new BackgroundFill(Color.TAN, null, null);
+		BackgroundFill bgfill = new BackgroundFill(BACKGROUND_COLOR, null, null);
 		centerBox.setBackground(new Background(bgfill));
 		centerBox.setPadding(new Insets(10));
 		centerBox.setSpacing(10);
 	}
 
+	/**
+	 * Sets up the bottom pane of the Mastermind game.
+	 * Sets up the bottom pane of the Masetermind game, including the 
+	 * guess circles and the guess button. 
+	 */
 	private void setupBottomPane() {
 		window.setBottom(bottomPane);
 
@@ -102,6 +141,12 @@ public class MastermindGUIView extends Application {
 		}
 	}
 
+	/**
+	 * Called when user clicks on Guess. First checks to see if guess is valid,
+	 * then checks win condition (if correct or out of guesses, game over and 
+	 * according message printed). If guess is incorrect and game is still going,
+	 * the RCRP and RCWP are shown and bottom bar is reset to allow for next guess.
+	 */
 	private void processGuess() {
 		if (guessIsValid()) {
 			makeNewGuessRow();
@@ -120,6 +165,12 @@ public class MastermindGUIView extends Application {
 		resetGuessCircles();
 	}
 
+	/**
+	 * Ends the game with an alert.
+	 * Ends the game with a dialogue box showing an alert that can be customized
+	 * by the parameter. 
+	 * @param string The string to be displayed in the alert.
+	 */
 	private void endGameWithAlert(String string) {
 		window.getChildren().remove(bottomPane);
 		Alert a = new Alert(Alert.AlertType.INFORMATION);
@@ -129,6 +180,11 @@ public class MastermindGUIView extends Application {
 		a.showAndWait();
 	}
 
+	/**
+	 * Checks if the guess is correct.
+	 * Checks if the current guess in the bottom bar is correct.
+	 * @return true if the guess is correct, false otherwise.
+	 */
 	private boolean guessIsCorrect() {
 		String guess = getGuessAsString();
 		try {
@@ -139,6 +195,12 @@ public class MastermindGUIView extends Application {
 		return false;
 	}
 
+	/**
+	 * Returns the guess as a string.
+	 * Returns the guess on the bottom bar as a string, each character representing
+	 * a color.
+	 * @return the guess as as string of 4 characters.
+	 */
 	private String getGuessAsString() {
 		String guess = "";
 		for (Circle circle : guessChoices) {
@@ -148,6 +210,13 @@ public class MastermindGUIView extends Application {
 		return guess;
 	}
 
+	/**
+	 * Checks to see if the current guess is valid.
+	 * Checks to see if the current guess is valid; if any of the 
+	 * colors is still black (has not been chosen yet), it is invalid.
+	 * Otherwise, valid.
+	 * @return true if the guess is valid, false otherwise.
+	 */
 	private boolean guessIsValid() {
 
 		for (Circle circle : guessChoices) {
@@ -158,6 +227,12 @@ public class MastermindGUIView extends Application {
 		return true;
 	}
 
+	/**
+	 * Cycles the color of the circle to the next color.
+	 * Cycles the color of the given circle to the next color. Color order
+	 * is given by the colorMap.
+	 * @param circle the circle to be cycled.
+	 */
 	private void cycleColor(Circle circle) {
 		int curColor = curGuessColors.get(circle);
 
@@ -170,6 +245,10 @@ public class MastermindGUIView extends Application {
 		circle.setFill(colorMap.get(curColor));
 	}
 
+	/**
+	 * Resets the guess circles to black.
+	 * Resets the guess circles to black so they are ready for the next guess.
+	 */
 	private void resetGuessCircles() {
 		for (Circle circle : guessChoices) {
 			curGuessColors.put(circle, -1);
@@ -177,6 +256,12 @@ public class MastermindGUIView extends Application {
 		}
 	}
 
+	/**
+	 * Makes the new finished guess row.
+	 * Makes the new finished guess row based on the guess that is currently
+	 * in the bottom bar. The colors that were chosen are shown along with 
+	 * up to 4 pegs based on RCRP and RCWP.
+	 */
 	private void makeNewGuessRow() {
 		numGuesses++;
 
@@ -207,6 +292,13 @@ public class MastermindGUIView extends Application {
 		}
 	}
 
+	/**
+	 * The guess stats grid (2x2 GridPane) is created. 
+	 * Number of right color right place is shown as black pegs and number of right color wrong place is shown as
+	 * white pegs. If the previous two numbers do not add up to 4, the remaining pegs
+	 * are shown as the same color as the background. 
+	 * @return the gridpane with the stats grid.
+	 */
 	private GridPane makeGuessStats() {
 		GridPane guessStats = new GridPane();
 		guessStats.setHgap(5);
@@ -231,6 +323,13 @@ public class MastermindGUIView extends Application {
 		return guessStats;
 	}
 
+	/**
+	 * The next stat peg color is returned.
+	 * The next stat peg color is returned based on the RCRP and RCWP.
+	 * Each time one is returned, RCRP or RCWP accordingly is decremented
+	 * so that this method will be correct next time it is run.
+	 * @return
+	 */
 	private Paint nextStatPegColor() {
 		if (RCRP > 0) {
 			RCRP--;
@@ -240,6 +339,6 @@ public class MastermindGUIView extends Application {
 			RCWP--;
 			return Color.WHITE;
 		}
-		return Color.TAN;
+		return BACKGROUND_COLOR;
 	}
 }

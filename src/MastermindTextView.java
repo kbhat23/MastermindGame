@@ -5,12 +5,23 @@ import controller.MastermindIllegalColorException;
 import controller.MastermindIllegalLengthException;
 import model.MastermindModel;
 
+/**
+ * @author kaushalbhat
+ * 
+ *         File: MastermindTextView.java
+ * 
+ *         Purpose: Contains the text-based view component of the MVC of the
+ *         Mastermind game. User must enter guesses as a 4-letter string, each
+ *         letter representing a color. User has 10 guesses to guess the correct
+ *         string, and with each guess is provided the number of colors that
+ *         are: right color right place right color wrong place The colors to
+ *         choose from are r, o, y, g, b, p.
+ *
+ */
 public class MastermindTextView {
-	
+
 	/**
-	 * The main view method of the Mastermind Game
-	 * Functionality described in file header comment.
-	 * @param args command line arguments; none necessary for this program
+	 * The text view method of the Mastermind Game.
 	 */
 	public static void runTextView() {
 		System.out.println("*******\nWelcome to Mastermind!\n*******\n");
@@ -36,7 +47,6 @@ public class MastermindTextView {
 				System.out.print("\nEnter guess number " + (guessesUsed + 1) + ": ");
 				String guess = keyboard.next();
 
-
 				// If correct, exits loop.
 				try {
 					if (controller.isCorrect(guess)) {
@@ -51,19 +61,19 @@ public class MastermindTextView {
 						int numWrongPlace = controller.getRightColorWrongPlace(guess);
 						System.out.println("Right color, right place: " + numRightPlace);
 						System.out.println("Right color, wrong place: " + numWrongPlace);
-						
+
 						guessesUsed++;
 					}
 				} catch (MastermindIllegalLengthException e) {
 					// TODO Auto-generated catch block
 					System.out.println(e.getMessage());
 					System.out.println("Please try again.");
-					
+
 				} catch (MastermindIllegalColorException e) {
 					// TODO Auto-generated catch block
 					System.out.println(e.getMessage());
 					System.out.println("Please try again. (remember: acceptable colors include r,o,y,g,b,p)");
-					
+
 				}
 
 			}
